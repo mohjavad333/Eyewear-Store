@@ -1,4 +1,4 @@
-**English** | [فارسی](README.fa.md)
+
 
 # Eyeglass Store
 
