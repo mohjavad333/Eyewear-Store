@@ -1,0 +1,157 @@
+/** @import must precede all other statements */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /**
+   * Tailwind CSS theme
+   * tailwind.config.ts expects the following color variables to be expressed as HSL values.
+   * Eyewear Store - Premium Design System
+  */
+  :root {
+    /* Backgrounds & Surfaces */
+    --background: 210 40% 98%;
+    --foreground: 15 15% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 15 15% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 15 15% 10%;
+
+    /* Brand Colors */
+    --primary: 217 91% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 208 35% 12%;
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 38 92% 50%;
+    --accent-foreground: 208 35% 12%;
+
+    --success: 134 61% 41%;
+    --success-foreground: 0 0% 100%;
+
+    --danger: 0 84% 60%;
+    --danger-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* Semantic Colors */
+    --muted: 210 11% 71%;
+    --muted-foreground: 208 7% 46%;
+
+    /* Borders & Input */
+    --border: 210 9% 87%;
+    --input: 210 9% 93%;
+    --ring: 217 91% 50%;
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 208 35% 12%;
+    --sidebar-primary: 217 91% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96.1%;
+    --sidebar-accent-foreground: 208 35% 12%;
+    --sidebar-border: 210 9% 87%;
+    --sidebar-ring: 217 91% 50%;
+  }
+
+  .dark {
+    --background: 208 35% 12%;
+    --foreground: 210 40% 98%;
+
+    --card: 208 20% 18%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 208 20% 18%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 208 35% 12%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 208 35% 12%;
+
+    --accent: 38 92% 50%;
+    --accent-foreground: 208 35% 12%;
+
+    --success: 134 61% 41%;
+    --success-foreground: 0 0% 100%;
+
+    --danger: 0 84% 60%;
+    --danger-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --muted: 208 15% 35%;
+    --muted-foreground: 210 12% 60%;
+
+    --border: 208 20% 25%;
+    --input: 208 20% 20%;
+    --ring: 217 91% 60%;
+
+    --sidebar-background: 208 35% 12%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 208 35% 12%;
+    --sidebar-accent: 208 20% 25%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 208 20% 25%;
+    --sidebar-ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  :where(p, span, li, h1, h2, h3, h4, h5, h6, a, button, label, td, th) {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  pre,
+  code {
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl font-bold tracking-tight;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl font-bold tracking-tight;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl font-bold tracking-tight;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl font-semibold tracking-tight;
+  }
+
+  h5 {
+    @apply text-lg font-semibold;
+  }
+
+  h6 {
+    @apply text-base font-semibold;
+  }
+}
