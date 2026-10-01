@@ -1,0 +1,245 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                 MONGODB & MONGOOSE SETUP FLOW DIAGRAM                         ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+STEP 1: INSTALL MONGODB
+═══════════════════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │ CHOOSE ONE OPTION                                                       │
+  ├─────────────────────────────────────────────────────────────────────────┤
+  │                                                                          │
+  │  [A] LOCAL MONGODB              │  [B] MONGODB ATLAS (CLOUD)           │
+  │  ──────────────────────          │  ──────────────────────────          │
+  │  ✓ macOS: brew install          │  ✓ Free account                      │
+  │  ✓ Windows: Download            │  ✓ Create cluster (5-10 min)        │
+  │  ✓ Linux: apt-get install       │  ✓ Get connection string             │
+  │  ✓ Start: mongod                │  ✓ Whitelist your IP                 │
+  │                                  │                                      │
+  │  Verify: mongosh                │  Verify: Connection string ready     │
+  │                                  │                                      │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+STEP 2: CREATE .ENV FILE
+═══════════════════════════════════════════════════════════════════════════════
+
+  ┌─ .env (Project Root) ──────────────────────────────────────────────────┐
+  │                                                                          │
+  │  For Local MongoDB:                                                     │
+  │  MONGODB_URI=mongodb://localhost:27017/optics_store                    │
+  │                                                                          │
+  │  For MongoDB Atlas:                                                     │
+  │  MONGODB_URI=mongodb+srv://admin:PASSWORD@cluster.mongodb.net/...      │
+  │                                                                          │
+  │  JWT_SECRET=your-secret-key-change-in-production                       │
+  │  PORT=3001                                                              │
+  │  NODE_ENV=development                                                   │
+  │                                                                          │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+STEP 3: TEST CONNECTION
+═══════════════════════════════════════════════════════════════════════════════
+
+  $ npm run test:db
+  
+  ┌─────────────────────┐
+  │ Test Passes? → ✅   │  Continue to Step 4
+  │ Test Fails?  → ❌   │  → Check MongoDB running → Try again
+  └─────────────────────┘
+
+
+STEP 4: CREATE DEMO USERS
+═══════════════════════════════════════════════════════════════════════════════
+
+  $ npm run seed
+  
+  Creates:
+  ┌──────────────────────────────────────┐
+  │ demo@example.com / password123       │
+  │ john@example.com / TestPassword123   │
+  └──────────────────────────────────────┘
+
+
+STEP 5: START DEV SERVER
+═══════════════════════════════════════════════════════════════════════════════
+
+  Terminal 1: mongod (if using local MongoDB)
+  Terminal 2: pnpm run dev
+  
+  Output:
+  ✓ Connected to MongoDB
+  🚀 Server running on http://localhost:3001
+  🚀 Vite dev server running at http://localhost:8080
+
+
+STEP 6: TEST LOGIN
+═══════════════════════════════════════════════════════════════════════════════
+
+  Browser: http://localhost:8080/login
+  
+  ┌──────────────────────────────────────────┐
+  │ Email: demo@example.com                  │
+  │ Password: password123                    │
+  │ [Sign In Button]                         │
+  └──────────────────────────────────────────┘
+  
+  ✅ Should redirect to /profile with user info
+
+
+ARCHITECTURE OVERVIEW
+═══════════════════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │                          BROWSER (React)                                │
+  │  ┌────────────────────────────────────────────────────────────────────┐ │
+  │  │ Pages:                                                             │ │
+  │  │  • Login.tsx          - Username/Password form                     │ │
+  │  │  • Register.tsx       - New user registration                      │ │
+  │  │  • Profile.tsx        - Protected route (auth required)            │ │
+  │  │                                                                     │ │
+  │  │ Context:                                                           │ │
+  │  │  • AuthContext.tsx    - Global auth state + token management      │ │
+  │  └────────────────────────────────────────────────────────────────────┘ │
+  └──────────────────────┬──────────────────────────────────────────────────┘
+                         │ HTTP + JSON + JWT Token
+                         │
+  ┌──────────────────────▼──────────────────────────────────────────────────┐
+  │                    BACKEND (Node.js + Express)                          │
+  │  ┌────────────────────────────────────────────────────────────────────┐ │
+  │  │ Routes: (/api/auth)                                               │ │
+  │  │  • POST /register      - Create user account                      │ │
+  │  │  • POST /login         - Authenticate + return token              │ │
+  │  │  • GET /me             - Get current user (needs token)           │ │
+  │  │  • PUT /profile        - Update profile (needs token)             │ │
+  │  │  • POST /addresses     - Add address (needs token)                │ │
+  │  │                                                                     │ │
+  │  │ Middleware:                                                        │ │
+  │  │  • JWT verification                                               │ │
+  │  │  • Password hashing (bcrypt)                                      │ │
+  │  └────────────────────────────────────────────────────────────────────┘ │
+  └──────────────────────┬──────────────────────────────────────────────────┘
+                         │ Mongoose ORM
+                         │
+  ┌──────────────────────▼──────────────────────────────────────────────────┐
+  │                    DATABASE (MongoDB)                                   │
+  │  ┌────────────────────────────────────────────────────────────────────┐ │
+  │  │ Collections:                                                       │ │
+  │  │  • users                                                           │ │
+  │  │    - firstName, lastName, email, password (hashed)                │ │
+  │  │    - phone, avatar, addresses[], createdAt, updatedAt            │ │
+  │  │                                                                     │ │
+  │  │ Database: optics_store                                            │ │
+  │  └────────────────────────────────────────────────────────────────────┘ │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+DATA FLOW: LOGIN
+═══════════════════════════════════════════════════════════════════════════════
+
+  1. User types email + password in Login.tsx
+                    ↓
+  2. Form submission calls useAuth().login()
+                    ↓
+  3. POST /api/auth/login { email, password }
+                    ↓
+  4. Express receives request
+                    ↓
+  5. Find user in MongoDB by email
+                    ↓
+  6. Bcrypt compares password hash
+                    ↓
+  7. If match: Generate JWT token
+                    ↓
+  8. Return token + user data
+                    ↓
+  9. AuthContext saves token to localStorage
+                    ↓
+  10. useAuth().isAuthenticated = true
+                    ↓
+  11. Navigate to /profile (protected route works now)
+                    ↓
+  12. Header shows username + logout button
+
+
+DEPENDENCIES TREE
+═══════════════════════════════════════════════════════════════════════════════
+
+  Project
+  ├── Frontend (React)
+  │   ├── client/context/AuthContext.tsx
+  │   │   └── uses: fetch API + localStorage
+  │   ├── client/pages/Login.tsx
+  │   ├── client/pages/Register.tsx
+  │   └── client/components/ProtectedRoute.tsx
+  │
+  ├── Backend (Node.js)
+  │   ├── server/index.ts (Express app)
+  │   │   ├── uses: express, cors
+  │   │   └── imports: authRoutes
+  │   │
+  │   ├── server/routes/auth.ts
+  │   │   ├── uses: User model, JWT, bcrypt
+  │   │   └── endpoints: login, register, profile, etc.
+  │   │
+  │   ├── server/models/User.ts (Mongoose)
+  │   │   ├── uses: mongoose, bcryptjs
+  │   │   └── schema: firstName, email, password, etc.
+  │   │
+  │   ├── server/middleware/auth.ts
+  │   │   ├── uses: jsonwebtoken
+  │   │   └── verifyToken(), authMiddleware
+  │   │
+  │   └── server/db.ts
+  │       └── uses: mongoose (connects to MongoDB)
+  │
+  └── Database (MongoDB)
+      └── Collection: users
+
+
+QUICK COMMAND REFERENCE
+═══════════════════════════════════════════════════════════════════════════════
+
+  npm run test:db        → Test MongoDB connection
+  npm run seed           → Create demo users
+  pnpm run dev           → Start dev server
+  mongosh                → Connect to MongoDB
+  npm run build          → Build for production
+
+
+SUCCESS INDICATORS
+═══════════════════════════════════════════════════════════════════════════════
+
+  ✓ npm run test:db shows "✅ Successfully connected to MongoDB!"
+  ✓ npm run seed shows "✓ Demo user created successfully"
+  ✓ pnpm run dev shows no errors
+  ✓ Login with demo@example.com / password123 works
+  ✓ Redirects to /profile after login
+  ✓ Profile shows user information
+  ✓ Logout removes token from localStorage
+
+
+TROUBLESHOOTING TREE
+═══════════════════════════════════════════════════════════════════════════════
+
+  Issue: Can't connect to MongoDB
+  └─ Solution: Run `mongod` (local) or check Atlas whitelist
+
+  Issue: npm run test:db fails
+  └─ Solution: Check MONGODB_URI in .env
+
+  Issue: Seed script doesn't create users
+  └─ Solution: Verify MongoDB connection first with `npm run test:db`
+
+  Issue: Login page doesn't work
+  └─ Solution: Restart dev server after MongoDB starts
+
+  Issue: Token not persisting
+  └─ Solution: Check browser localStorage (DevTools → Application)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                           🎉 SETUP COMPLETE!
+═══════════════════════════════════════════════════════════════════════════════
